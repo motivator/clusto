@@ -27,13 +27,13 @@ class ExclusivePool(Driver):
                                "Tried to insert %s." % str(type(thing)))
 
         pools = self.get_pools(thing)
-        if self._driver_name = 'exclusive_pool':
+        if self._driver_name == ExclusivePool._driver_name:
             if pools:
                 raise PoolException("%s is already in pools %s, cannot insert "
                                     "exclusively." % (thing, pools))
         else:
             for i in pools:
-                if i._driver_name = 'exclusive_pool':
+                if i._driver_name == ExclusivePool._driver_name:
                     raise PoolException("%s is in ExclusivePool %s, cannot insert "
                                         "into any other pool." % (thing, i))
 
@@ -87,7 +87,7 @@ class Pool(ExclusivePool):
         if thing in self:
             raise PoolException("%s is already in pool %s." % (thing, self))
 
-        ExclusivePool.insert(self, thing)
+        super(Pool, self).insert(thing)
 
 
 class UniquePool(ExclusivePool):
@@ -110,4 +110,4 @@ class UniquePool(ExclusivePool):
             raise PoolException("%s is already in UniquePool(s) %s." %
                                 (thing, pools))
 
-        ExclusivePool.insert(self, thing)
+        super(UniquePool, self).insert(thing)
