@@ -34,8 +34,9 @@ class ExclusivePool(Driver):
         else:
             for i in pools:
                 if i._driver_name == ExclusivePool._driver_name:
-                    raise PoolException("%s is in ExclusivePool %s, cannot insert "
-                                        "into any other pool." % (thing, i))
+                    raise PoolException("%s is in ExclusivePool %s, cannot "
+                                        "insert into any other pool." %
+                                        (thing, i))
 
         self.add_attr("_contains", d, number=True)
 
@@ -84,10 +85,14 @@ class Pool(ExclusivePool):
         A given entity can only be in a Pool one time.
         """
 
-        if thing in self:
-            raise PoolException("%s is already in pool %s." % (thing, self))
+        d = self.ensure_driver(thing,
+                               "Can only insert an Entity or a Driver. "
+                               "Tried to insert %s." % str(type(thing)))
 
-        super(Pool, self).insert(thing)
+        if d in self:
+            raise PoolException("%s is already in pool %s." % (d, self))
+
+        super(Pool, self).insert(d)
 
 
 class UniquePool(ExclusivePool):
@@ -105,9 +110,13 @@ class UniquePool(ExclusivePool):
         A given entity can only be in ONE UniquePool.
         """
 
-        pools = thing.parents(clusto_drivers=[self._driver_name])
+        d = self.ensure_driver(thing,
+                               "Can only insert an Entity or a Driver. "
+                               "Tried to insert %s." % str(type(thing)))
+
+        pools = d.parents(clusto_drivers=[self._driver_name])
         if pools:
             raise PoolException("%s is already in UniquePool(s) %s." %
-                                (thing, pools))
+                                (d, pools))
 
-        super(UniquePool, self).insert(thing)
+        super(UniquePool, self).insert(d)
