@@ -53,35 +53,47 @@ class PortMixin:
 
         return num
 
-    def connect_ports(self, porttype, srcportnum, dstdev, dstportnum):
+    def _port_conntype(self, porttype):
+        if 'conntype' in self._portmeta[porttype] and self._portmeta[porttype]['conntype']:
+            return self._portmeta[porttype]['conntype']
+        else:
+            return porttype
+
+    def connect_ports(self, porttype, srcportnum, dstdev, dstportnum, dstporttype=None):
         """connect a local port to a port on another device
         """
 
+        if dstporttype is None:
+            dstporttype = porttype
 
-        for dev, num in [(self, srcportnum), (dstdev, dstportnum)]:
+        for dev, num, ptype in [(self, srcportnum, porttype), (dstdev, dstportnum, dstporttype)]:
 
             if not hasattr(dev, 'port_exists'):
                 msg = "%s has no ports."
                 raise ConnectionException(msg % (dev.name))
 
-            num = dev._ensure_portnum(porttype, num)
+            num = dev._ensure_portnum(ptype, num)
 
-            if not dev.port_exists(porttype, num):
+            if not dev.port_exists(ptype, num):
                 msg = "port %s:%d doesn't exist on %s"
-                raise ConnectionException(msg % (porttype, num, dev.name))
+                raise ConnectionException(msg % (ptype, num, dev.name))
 
         
-            if not dev.port_free(porttype, num):
+            if not dev.port_free(ptype, num):
                 msg = "port %s:%d on %s is already in use"
-                raise ConnectionException(msg % (porttype, num, dev.name))
+                raise ConnectionException(msg % (ptype, num, dev.name))
+
+            if not self.ports_connectable(porttype, srcportnum, dstdev, dstportnum, dstporttype):
+                msg = "ports not connectable"
+                raise ConnectionException(msg)
 
         try:
             clusto.begin_transaction()
             self.set_port_attr(porttype, srcportnum, 'connection', dstdev)
             self.set_port_attr(porttype, srcportnum, 'otherportnum', dstportnum)
             
-            dstdev.set_port_attr(porttype, dstportnum, 'connection', self)
-            dstdev.set_port_attr(porttype, dstportnum, 'otherportnum', srcportnum)
+            dstdev.set_port_attr(dstporttype, dstportnum, 'connection', self)
+            dstdev.set_port_attr(dstporttype, dstportnum, 'otherportnum', srcportnum)
             clusto.commit()
         except Exception, x:
             clusto.rollback_transaction()
@@ -124,12 +136,18 @@ class PortMixin:
         return self.get_port_attr(porttype, portnum, 'connection')
             
 
-    def ports_connectable(self, porttype, srcportnum, dstdev, dstportnum):
+    def ports_connectable(self, porttype, srcportnum, dstdev, dstportnum, dstporttype=None):
         """test if the ports you're trying to connect are compatible.
         """
 
-        return (self.port_exists(porttype, srcportnum) 
-                and dstdev.port_exists(porttype, dstportnum))
+        if dstporttype:
+            return ((self.port_exists(porttype, srcportnum) 
+                    and dstdev.port_exists(dstporttype, dstportnum))
+                    and (self._port_conntype(porttype) ==
+                    dstdev._port_conntype(dstporttype)))
+        else:
+            return (self.port_exists(porttype, srcportnum) 
+                    and dstdev.port_exists(porttype, dstportnum))
  
     def port_exists(self, porttype, portnum):
         """return true if the given port exists on this device"""
