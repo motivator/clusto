@@ -84,10 +84,20 @@ class IPMixin:
             raise x
         
 
+    def get_ips_from_osport(self, osportname=None):
+        result = {}
 
-        
+        if osportname:
+            attrs = self.attrs(key=IPManager._attr_name, subkey='osportname', value=osportname)
+        else:
+            attrs = self.attrs(key=IPManager._attr_name, subkey='osportname')
 
+        for a in attrs:
+            ip = self.attr_values(key=IPManager._attr_name, subkey='ipstring', number=a.number)
 
+            if a.value not in result:
+                result[a.value] = []
 
-            
-        
+            result[a.value] = result[a.value] + ip
+
+        return result
