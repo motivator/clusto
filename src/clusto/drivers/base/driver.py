@@ -572,6 +572,11 @@ class Driver(object):
         if subkey:
             self._check_attr_name(subkey)
 
+        attrs = self.attrs(key=key, number=number, subkey=subkey, value=value)
+        if len(attrs) == 1:
+            raise DriverException("Attribute with same key, subkey, number "
+                                  "and value already exists")
+
         if isinstance(value, Driver):
             value = value.entity
 
