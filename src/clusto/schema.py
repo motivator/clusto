@@ -4,18 +4,25 @@ Clusto schema
 """
 
 VERSION = 3
-from sqlalchemy import *
+from sqlalchemy import MetaData, Table, Column, DDL, TIMESTAMP, func
+from sqlalchemy import ForeignKey, String, Integer, Text, Index, DateTime
+from sqlalchemy import and_, or_, not_, select
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.exc import InvalidRequestError
 
 #from sqlalchemy.ext.sessioncontext import SessionContext
 #from sqlalchemy.ext.assignmapper import assign_mapper
 
-from sqlalchemy.orm import * #Mapper, MapperExtension
+from sqlalchemy.orm import scoped_session, sessionmaker, mapper, relation
 from sqlalchemy.orm.mapper import Mapper
 
 from sqlalchemy.orm import mapperlib
 import sqlalchemy.sql
+
+from sqlalchemy import __version__ as sqlalchemy_version
+if map(int, sqlalchemy_version.split('.')) >= [0, 7]:
+    from sqlalchemy import event
+    NEW_SQLALCHEMY_VERSION = True
 
 import re
 import sys
@@ -139,11 +146,21 @@ Index('idx_attrs_entity_version',
 Index('idx_attrs_key', ATTR_TABLE.c.key)
 Index('idx_attrs_subkey', ATTR_TABLE.c.subkey)
 
-DDL('CREATE INDEX idx_attrs_str_value on %(table)s (string_value(20))', on='mysql').execute_at("after-create", ATTR_TABLE)
+if NEW_SQLALCHEMY_VERSION:
+    create_index = DDL('CREATE INDEX idx_attrs_str_value on %(table)s (string_value(20))')
+    event.listen(ATTR_TABLE, 'after_create', create_index.execute_if(dialect='mysql'))
 
-DDL('CREATE INDEX idx_attrs_str_value on %(table)s ((substring(string_value,0,20)))', on='postgresql').execute_at("after-create", ATTR_TABLE)
+    create_index = DDL('CREATE INDEX idx_attrs_str_value on %(table)s ((substring(string_value,0,20)))')
+    event.listen(ATTR_TABLE, 'after_create', create_index.execute_if(dialect='postgresql'))
 
-DDL('CREATE INDEX idx_attrs_str_value on %(table)s (string_value)', on='sqlite').execute_at("after-create", ATTR_TABLE)
+    create_index = DDL('CREATE INDEX idx_attrs_str_value on %(table)s (string_value)')
+    event.listen(ATTR_TABLE, 'after_create', create_index.execute_if(dialect='sqlite'))
+else:
+    DDL('CREATE INDEX idx_attrs_str_value on %(table)s (string_value(20))', on='mysql').execute_at("after-create", ATTR_TABLE)
+
+    DDL('CREATE INDEX idx_attrs_str_value on %(table)s ((substring(string_value,0,20)))', on='postgresql').execute_at("after-create", ATTR_TABLE)
+
+    DDL('CREATE INDEX idx_attrs_str_value on %(table)s (string_value)', on='sqlite').execute_at("after-create", ATTR_TABLE)
 
 COUNTER_TABLE = Table('counters', METADATA,
                       Column('counter_id', Integer, primary_key=True),
