@@ -16,6 +16,12 @@ class IPManagerTest(testbase.ClustoTestBase):
         ip2 = IPManager('b1', gateway='10.0.128.1', netmask='255.255.252.0',
                         baseip='10.0.128.0')
 
+        ip3 = IPManager('c1', gateway='172.16.40.0', netmask='255.255.255.0',
+                        baseip='172.16.40.0')
+        
+        ip4 = IPManager('c2', gateway='172.16.0.0', netmask='255.255.0.0',
+                        baseip='172.16.0.0')
+
         s = BasicServer('s1')
 
     def testBadIPAllocation(self):
@@ -44,6 +50,13 @@ class IPManagerTest(testbase.ClustoTestBase):
 
         self.assertEqual(ip1, IPManager.get_ip_manager('192.168.1.23'))
         self.assertEqual(ip2, IPManager.get_ip_manager('10.0.129.22'))
+
+    def testGetIPManagers(self):
+        ip3, ip4 = map(clusto.get_by_name, ['c1', 'c2'])
+
+        self.assertEqual([ip3, ip4], IPManager.get_ip_managers('172.16.40.2'))
+        self.assertEqual([ip4], IPManager.get_ip_managers('172.16.0.2'))
+        self.assertEqual([], IPManager.get_ip_managers('192.168.40.1'))
 
     def testGetIP(self):
 

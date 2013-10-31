@@ -115,6 +115,29 @@ class IPManager(ResourceManager):
         raise ResourceNotAvailableException("out of available ips.")
 
     @classmethod
+    def get_ip_managers(cls, ip):
+        """return a list of valid ip managers for the given ip.
+
+        @param ip: the ip
+        @type ip: integer, string, or IPy object
+
+        @return: a list of IP managers from the clusto database
+        """
+        ipman = None
+        if isinstance(ip, Attribute):
+            ipman = ip.entity
+            return Driver(ipman)
+
+        ipmanagers = []
+        for ipman in clusto.get_entities(clusto_types=[cls]):
+            try:
+                ipman.ensure_type(ip)
+                ipmanagers.append(Driver(ipman))
+            except ResourceTypeException:
+                continue
+        return ipmanagers
+
+    @classmethod
     def get_ip_manager(cls, ip):
         """return a valid ip manager for the given ip.
 
@@ -123,26 +146,12 @@ class IPManager(ResourceManager):
 
         @return: the appropriate IP manager from the clusto database
         """
-
-        ipman = None
-        if isinstance(ip, Attribute):
-            ipman = ip.entity
-            return Driver(ipman)
-
-        for ipmantest in clusto.get_entities(clusto_types=[cls]):
-            try:
-                ipmantest.ensure_type(ip)
-            except ResourceTypeException:
-                continue
-
-            ipman = Driver(ipmantest)
-            break
-        
-
+        ipman = cls.get_ip_managers(ip)
         if not ipman:
-            raise ResourceException(u"No resource manager for %s exists."
-                                    % str(ip))
-        
+            raise ResourceException("No resource manager for %s exists." % str(ip))
+        if len(ipman) > 1:
+            raise ResourceException("More than one resource manager matches %s" % str(ip))
+        ipman = ipman[0]
         return ipman
         
     @classmethod
