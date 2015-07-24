@@ -34,11 +34,16 @@ class ResourceManagerTests(testbase.ClustoTestBase):
         d = Driver('d')
 
         rm.allocate(d, 'foo')
-        self.assertEqual(rm.count, 1)
+        rm.allocate(d, 'bar')
+        self.assertEqual(rm.count, 2)
 
         rm.deallocate(d, 'foo')
-        self.assertEqual(rm.count, 0)
+        self.assertEqual(rm.count, 1)
         self.assertEqual(rm.owners('foo'), [])
+
+        rm.deallocate(d, 'bar')
+        self.assertEqual(rm.count, 0)
+        self.assertEqual(rm.owners('bar'), [])
 
     def testGeneralDeallocate(self):
 
