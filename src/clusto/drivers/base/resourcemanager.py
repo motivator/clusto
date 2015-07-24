@@ -199,6 +199,10 @@ class ResourceManager(Driver):
         try:
             if resource is ():                      
                 for res in self.resources(thing):
+                    try:
+                        self.owners(res.value)
+                    except ResourceTypeException, e:
+                        continue
                     thing.del_attrs(self._attr_name, number=res.number)
 
             elif resource and not self.available(resource, number):
