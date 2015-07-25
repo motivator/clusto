@@ -3,7 +3,6 @@ import clusto
 from clusto.schema import select, and_, ATTR_TABLE, Attribute, func, Counter
 from clusto.drivers.base import Driver, ClustoMeta
 from clusto.exceptions import ResourceTypeException, ResourceNotAvailableException, ResourceException
-import logging
 
 
 
@@ -209,8 +208,9 @@ class ResourceManager(Driver):
                 resource, number = self.ensure_type(resource, number)
                 try:
                     number = self.get_resource_number(thing, resource)
-                except:
-                    pass
+                except ResourceException, e:
+                    clusto.rollback_transaction()
+                    raise
 
                 res = thing.attrs(self._attr_name, self, subkey='manager', number=number)
 
