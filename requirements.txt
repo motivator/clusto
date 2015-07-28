@@ -1,6 +1,6 @@
 distribute
 argparse
 sqlalchemy>=0.7
-IPython>=0.10
+IPython>=0.10,<4.0.0b1
 IPy
 WebOb
