@@ -81,6 +81,7 @@ class ResourceManager(Driver):
         """Get the Attributes for the attrs on the resource assigned to a given enttiy matching the given key."""
         
         resource, number = self.ensure_type(resource, number, thing=thing)
+        number = self.get_resource_number(thing, resource)
         
         return thing.attrs(self._attr_name, number=number, subkey=key)
 
@@ -89,6 +90,7 @@ class ResourceManager(Driver):
         """Add an Attribute for the resource assigned to a given entity setting the given key and value"""
         
         resource, number = self.ensure_type(resource, number, thing=thing)
+        number = self.get_resource_number(thing, resource)
 
         attr = thing.add_attr(self._attr_name, number=number, subkey=key, value=value)
         return attr
@@ -98,6 +100,7 @@ class ResourceManager(Driver):
         """Set an Attribute for the resource assigned to a given entity with the given key and value"""
         
         resource, number = self.ensure_type(resource, number, thing=thing)
+        number = self.get_resource_number(thing, resource)
         attr = thing.set_attr(self._attr_name, number=number, subkey=key, value=value)
 
         return attr
@@ -107,6 +110,7 @@ class ResourceManager(Driver):
         """Delete an Attribute for the resource assigned to a given entity matching the given key and value"""
         
         resource, number = self.ensure_type(resource, number, thing=thing)
+        number = self.get_resource_number(thing, resource)
         thing.del_attrs(self._attr_name, number=number, subkey=key, value=value)
 
 
@@ -195,12 +199,21 @@ class ResourceManager(Driver):
         try:
             if resource is ():                      
                 for res in self.resources(thing):
+                    res_mgr = self.get_resource_manager(res)
+                    if res_mgr != self:
+                        continue
                     thing.del_attrs(self._attr_name, number=res.number)
 
             elif resource and not self.available(resource, number):
                 resource, number = self.ensure_type(resource, number)
+                try:
+                    number = self.get_resource_number(thing, resource)
+                except ResourceException, e:
+                    clusto.rollback_transaction()
+                    raise
 
                 res = thing.attrs(self._attr_name, self, subkey='manager', number=number)
+
                 for a in res: 
                     thing.del_attrs(self._attr_name, number=a.number)
                     

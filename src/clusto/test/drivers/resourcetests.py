@@ -34,28 +34,42 @@ class ResourceManagerTests(testbase.ClustoTestBase):
         d = Driver('d')
 
         rm.allocate(d, 'foo')
-        self.assertEqual(rm.count, 1)
+        rm.allocate(d, 'bar')
+        self.assertEqual(rm.count, 2)
 
         rm.deallocate(d, 'foo')
-        self.assertEqual(rm.count, 0)
+        self.assertEqual(rm.count, 1)
         self.assertEqual(rm.owners('foo'), [])
+
+        rm.deallocate(d, 'bar')
+        self.assertEqual(rm.count, 0)
+        self.assertEqual(rm.owners('bar'), [])
 
     def testGeneralDeallocate(self):
 
-        rm = ResourceManager('test')
+        rm1 = ResourceManager('test1')
+        rm2 = ResourceManager('test2')
         d = Driver('d')
 
-        rm.allocate(d, 'foo')
-        rm.allocate(d, 'bar')
+        rm1.allocate(d, 'foo1')
+        rm1.allocate(d, 'bar1')
+
+        rm2.allocate(d, 'foo2')
+        rm2.allocate(d, 'bar2')
         
-        self.assertEqual(rm.count, 2)
-        self.assertEqual(sorted([x.value for x in rm.resources(d)]),
-                         sorted(['foo', 'bar']))
+        self.assertEqual(rm1.count, 2)
+        self.assertEqual(rm2.count, 2)
+        self.assertEqual(sorted([x.value for x in rm1.resources(d)]),
+                         sorted(['foo1', 'bar1', 'foo2', 'bar2']))
 
-        rm.deallocate(d)
+        rm1.deallocate(d)
+        self.assertEqual(rm1.count, 0)
+        self.assertEqual(rm2.count, 2)
 
-        self.assertEqual(rm.count, 0)
-        self.assertEqual(sorted(rm.resources(d)),
+        rm2.deallocate(d)
+        self.assertEqual(rm2.count, 0)
+
+        self.assertEqual(sorted(ResourceManager.resources(d)),
                          sorted([]))
 
 
