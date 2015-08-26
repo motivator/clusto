@@ -1,5 +1,4 @@
 
-import re
 from clusto.drivers.base import Location, Device, Driver
 
 class BasicRack(Location):
