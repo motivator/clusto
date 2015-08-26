@@ -2,7 +2,6 @@ import clusto
 from clusto.drivers.base import ResourceManager
 
 from clusto.exceptions import ResourceException
-from clusto.schema import ATTR_TABLE
 
 class SimpleNameManagerException(ResourceException):
     pass

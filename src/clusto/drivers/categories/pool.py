@@ -3,7 +3,6 @@ from clusto.schema import *
 
 from clusto.exceptions import PoolException
 
-from itertools import imap, chain
 
 class Pool(Driver):
     """

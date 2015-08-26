@@ -1,11 +1,8 @@
-import unittest
 from clusto.test import testbase
 
 import clusto
 from clusto.schema import *
 from clusto.drivers.base import *
-from clusto.drivers import BasicDatacenter
-from sqlalchemy.exc import InvalidRequestError
 
 class TestClustoVersioning(testbase.ClustoTestBase):
 

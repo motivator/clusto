@@ -5,7 +5,6 @@
 # Shell command
 # Copyright 2010, Jeremy Grosser <synack@digg.com>
 
-import argparse
 import os
 import sys
 

@@ -1,11 +1,7 @@
 from clusto.test import testbase
 
-from clusto.drivers import BasicServer, BasicRack, IPManager
-from clusto.drivers import BasicNetworkSwitch, BasicPowerStrip
-from clusto.exceptions import ConnectionException
 import clusto
 
-import os
 import threading
 import ConfigParser
 

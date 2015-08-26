@@ -1,7 +1,6 @@
 from clusto.test import testbase
 
 from clusto.drivers import BasicServer, BasicRack, BasicPowerStrip, BasicNetworkSwitch, BasicDatacenter, IPManager, Pool
-from clusto.exceptions import ConnectionException
 import clusto
 
 class ClusterUsageTest(testbase.ClustoTestBase):

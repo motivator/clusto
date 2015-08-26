@@ -9,7 +9,6 @@ import sys
 
 import IPython
 
-import clusto
 from clusto import script_helper
 from clusto import *
 

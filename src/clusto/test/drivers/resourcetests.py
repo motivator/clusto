@@ -1,10 +1,7 @@
-import clusto
 from clusto.test import testbase 
-import itertools
 
 from clusto.drivers import *
 
-from clusto.drivers.resourcemanagers.simplenamemanager import SimpleNameManagerException
 
 
 class ResourceManagerTests(testbase.ClustoTestBase):

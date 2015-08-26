@@ -2,13 +2,12 @@
 IPMixin is a basic mixin to be used by devices that can be assigned IPs
 """
 
-import re
 
 import clusto
 
 from clusto.drivers.resourcemanagers import IPManager
 
-from clusto.exceptions import ConnectionException,  ResourceException
+from clusto.exceptions import ResourceException
 
 
 class IPMixin:

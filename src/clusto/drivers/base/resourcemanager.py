@@ -1,8 +1,8 @@
 
 import clusto
-from clusto.schema import select, and_, ATTR_TABLE, Attribute, func, Counter
+from clusto.schema import Counter
 from clusto.drivers.base import Driver, ClustoMeta
-from clusto.exceptions import ResourceTypeException, ResourceNotAvailableException, ResourceException
+from clusto.exceptions import ResourceException
 
 
 

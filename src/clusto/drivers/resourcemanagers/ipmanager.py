@@ -1,8 +1,8 @@
 import clusto
 from clusto.schema import Attribute
 
-from clusto.drivers.base import ResourceManager, ResourceTypeException, Driver
-from clusto.exceptions import ResourceNotAvailableException, ResourceException
+from clusto.drivers.base import ResourceManager, Driver
+from clusto.exceptions import ResourceNotAvailableException, ResourceTypeException, ResourceException
 
 import IPy
 
