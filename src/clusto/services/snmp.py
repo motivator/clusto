@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 from socket import socket, AF_INET, SOCK_DGRAM
 from traceback import format_exc
-from time import strftime, time, localtime, sleep
+from time import strftime
 from struct import unpack
 import sys
 
 import logging
 
-from clusto.services.config import conf, get_logger
+from clusto.services.config import get_logger
 log = get_logger('clusto.snmp', 'INFO')
 
 import logging
@@ -18,7 +18,7 @@ loading.setLevel(logging.ERROR)
 
 from scapy.all import SNMP
 
-from clusto.drivers import IPManager, PenguinServer
+from clusto.drivers import IPManager
 import clusto
 
 sys.path.insert(0, '/var/lib/clusto')

@@ -7,7 +7,6 @@ except ImportError:
 from webob import Request, Response
 from traceback import format_exc
 from urllib import unquote_plus
-import new
 import re
 import os
 
