@@ -4,7 +4,6 @@ from clusto.test import testbase
 
 from clusto.drivers import IPManager, BasicServer, ResourceTypeException, ResourceException
 
-import IPy
 
 class IPManagerTest(testbase.ClustoTestBase):
 

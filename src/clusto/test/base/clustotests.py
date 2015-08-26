@@ -1,11 +1,9 @@
-import unittest
 from clusto.test import testbase
 
 import clusto
 from clusto.schema import *
 from clusto.drivers.base import *
 from clusto.drivers import BasicDatacenter, Pool, BasicServer, IPManager, BasicRack
-from sqlalchemy.exc import InvalidRequestError
 from clusto.exceptions import TransactionException
 
 # copied from mock
