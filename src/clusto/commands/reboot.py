@@ -6,7 +6,6 @@ import argparse
 import sys
 
 import clusto
-from clusto import drivers
 from clusto import script_helper
 
 class Reboot(script_helper.Script):

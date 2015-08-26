@@ -2,15 +2,11 @@
 # -*- mode: python; sh-basic-offset: 4; indent-tabs-mode: nil; coding: utf-8 -*-
 # vim: tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8
 
-import argparse
 import sys
 
 import clusto
-from clusto import drivers
 from clusto import script_helper
-from pprint import pprint
 import sys
-import traceback
 
 
 JSON=False
